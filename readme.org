@@ -1,0 +1,24 @@
+* SDSL-lite FM-index bindings in Rust
+
+This crate provides Rust bindings to the FM-index provided by [[https://github.com/simongog/sdsl-lite][SDSL-lite]] (also known as a /compact
+suffix array/ or =csa= there).
+
+It's not (yet?) user friendly.
+
+** Dependencies
+
+You need to have the following libraries installed (typically in =/usr/lib=) to
+dynamically link against:
+- =stdc++=: you really should have this already.
+- =divsufsort=: on the Arch/AUR =sdsl-lite= package, this comes as a dependency.
+- =divsufsort64=
+- =sdsl=: the AUR package didn't quite work. Instead, clone the =sdsl-lite=
+  repo, run =./install.sh=, and copy the =libsdsl.a= output into =/usr/lib=.
+  Alternatively you can try adding additional directories to be searched by the
+  linked, but you're on your own then.
+
+** Building
+1. Run =just build= from this directory. It will build =libsdslfm.a=.
+2. Edit the search path in =build.rs= to the current directory.
+3. Now, the =build.rs= script ensures that dependent crates dynamically link against the
+dependencies listed above, and statically link against the =libsdslfm.a= in this directory.
