@@ -15,125 +15,61 @@ using FmIndexByte64 = csa_wt<wt_huff<rrr_vector<63>>, 64, 128>;
 using FmIndexInt64  = csa_wt<wt_int<rrr_vector<63>>, 64, 128>;
 using LocateResult  = int_vector<64>;
 
-// BYTE 32
+// macros generated with the help of AI slop
+#define CONSTRUCT_FM_WITH_TYPE(TOKEN_LC, TOKEN_CAP) \
+  	void* construct_##TOKEN_LC(const char* path, size_t path_len, size_t width) { \
+        std::string path_str = std::string(path, path_len);        \
+        FmIndex##TOKEN_CAP* fm_index = new FmIndex##TOKEN_CAP;     \
+        construct(*fm_index, path_str, width);                     \
+        return fm_index;                                           \
+    }
 
-FmIndexByte32* construct_byte32(const char* path, size_t path_len, size_t width) {
-	// Convert path to string.
-	string path_str         = string(path, path_len);
-	FmIndexByte32* fm_index = new FmIndexByte32;
-	// Assume 1-byte alphabet always.
-	construct(*fm_index, path_str, width);
-	return fm_index;
-}
+#define DESTRUCT_FM_WITH_TYPE(TOKEN_LC, TOKEN_CAP)                    \
+    void destruct_fm_index_##TOKEN_LC(FmIndex##TOKEN_CAP* fm_index) { \
+    		delete fm_index;                                              \
+    }
 
-void destruct_fm_index_byte32(FmIndexByte32* fm_index) {
-	delete fm_index;
-}
+#define COUNT_WITH_TYPE(TOKEN_LC, TOKEN_CAP, PATTERN_TY)                               \
+    size_t count_##TOKEN_LC(const FmIndex##TOKEN_CAP* fm_index, const PATTERN_TY* pattern, size_t pattern_len) { \
+    		return count(*fm_index, pattern, pattern + pattern_len);                        \
+    }
 
-size_t count_byte32(const FmIndexByte32* fm_index, const uint8_t* pattern, size_t pattern_len) {
-	return count(*fm_index, pattern, pattern + pattern_len);
-}
+#define SIZE_IN_BYTES_WITH_TYPE(TOKEN_LC, TOKEN_CAP)                               \
+    size_t size_in_bytes_##TOKEN_LC(const FmIndex##TOKEN_CAP* fm_index) { 				 \
+    		return size_in_bytes(*fm_index); 																					 \
+    }
 
-size_t size_in_bytes_byte32(const FmIndexByte32* fm_index) {
-	return size_in_bytes(*fm_index);
-}
+#define LOCATE_WITH_TYPE(TOKEN_LC, TOKEN_CAP, PATTERN_TY)                               \
+    LocateResult* locate_##TOKEN_LC(const FmIndex##TOKEN_CAP* fm_index, const PATTERN_TY* pattern, size_t pattern_len) { \
+    		LocateResult r = locate(*fm_index, pattern, pattern + pattern_len); \
+    		LocateResult* result = new LocateResult(r); 												\
+				return result; 																											\
+    }
 
-LocateResult* locate_byte32(const FmIndexByte32* fm_index, const uint8_t* pattern,
-                            size_t pattern_len) {
-	LocateResult r       = locate(*fm_index, pattern, pattern + pattern_len);
-	LocateResult* result = new LocateResult(r);
-	return result;
-}
+CONSTRUCT_FM_WITH_TYPE(byte32, Byte32);
+CONSTRUCT_FM_WITH_TYPE(int32, Int32);
+CONSTRUCT_FM_WITH_TYPE(byte64, Byte64);
+CONSTRUCT_FM_WITH_TYPE(int64, Int64);
 
-// INT 32
+DESTRUCT_FM_WITH_TYPE(byte32, Byte32);
+DESTRUCT_FM_WITH_TYPE(int32, Int32);
+DESTRUCT_FM_WITH_TYPE(byte64, Byte64);
+DESTRUCT_FM_WITH_TYPE(int64, Int64);
 
-FmIndexInt32* construct_int32(const char* path, size_t path_len, size_t width) {
-	// Convert path to string.
-	string path_str        = string(path, path_len);
-	FmIndexInt32* fm_index = new FmIndexInt32;
-	// Assume 1-byte alphabet always.
-	construct(*fm_index, path_str, width);
-	return fm_index;
-}
+COUNT_WITH_TYPE(byte32, Byte32, uint8_t);
+COUNT_WITH_TYPE(int32, Int32, uint64_t);
+COUNT_WITH_TYPE(byte64, Byte64, uint8_t);
+COUNT_WITH_TYPE(int64, Int64, uint64_t);
 
-void destruct_fm_index_int32(FmIndexInt32* fm_index) {
-	delete fm_index;
-}
+SIZE_IN_BYTES_WITH_TYPE(byte32, Byte32);
+SIZE_IN_BYTES_WITH_TYPE(int32, Int32);
+SIZE_IN_BYTES_WITH_TYPE(byte64, Byte64);
+SIZE_IN_BYTES_WITH_TYPE(int64, Int64);
 
-size_t count_int32(const FmIndexInt32* fm_index, const uint64_t* pattern, size_t pattern_len) {
-	return count(*fm_index, pattern, pattern + pattern_len);
-}
-
-size_t size_in_bytes_int32(const FmIndexInt32* fm_index) {
-	return size_in_bytes(*fm_index);
-}
-
-LocateResult* locate_int32(const FmIndexInt32* fm_index, const uint64_t* pattern,
-                           size_t pattern_len) {
-	LocateResult r       = locate(*fm_index, pattern, pattern + pattern_len);
-	LocateResult* result = new LocateResult(r);
-	return result;
-}
-
-// BYTE 64
-
-FmIndexByte64* construct_byte64(const char* path, size_t path_len, size_t width) {
-	// Convert path to string.
-	string path_str         = string(path, path_len);
-	FmIndexByte64* fm_index = new FmIndexByte64;
-	// Assume 1-byte alphabet always.
-	construct(*fm_index, path_str, width);
-	return fm_index;
-}
-
-void destruct_fm_index_byte64(FmIndexByte64* fm_index) {
-	delete fm_index;
-}
-
-size_t count_byte64(const FmIndexByte64* fm_index, const uint8_t* pattern, size_t pattern_len) {
-	return count(*fm_index, pattern, pattern + pattern_len);
-}
-
-size_t size_in_bytes_byte64(const FmIndexByte64* fm_index) {
-	return size_in_bytes(*fm_index);
-}
-
-LocateResult* locate_byte64(const FmIndexByte64* fm_index, const uint8_t* pattern,
-                            size_t pattern_len) {
-	LocateResult r       = locate(*fm_index, pattern, pattern + pattern_len);
-	LocateResult* result = new LocateResult(r);
-	return result;
-}
-
-// INT 64
-
-FmIndexInt64* construct_int64(const char* path, size_t path_len, size_t width) {
-	// Convert path to string.
-	string path_str        = string(path, path_len);
-	FmIndexInt64* fm_index = new FmIndexInt64;
-	// Assume 1-byte alphabet always.
-	construct(*fm_index, path_str, width);
-	return fm_index;
-}
-
-void destruct_fm_index_int64(FmIndexInt64* fm_index) {
-	delete fm_index;
-}
-
-size_t count_int64(const FmIndexInt64* fm_index, const uint64_t* pattern, size_t pattern_len) {
-	return count(*fm_index, pattern, pattern + pattern_len);
-}
-
-size_t size_in_bytes_int64(const FmIndexInt64* fm_index) {
-	return size_in_bytes(*fm_index);
-}
-
-LocateResult* locate_int64(const FmIndexInt64* fm_index, const uint64_t* pattern,
-                           size_t pattern_len) {
-	LocateResult r       = locate(*fm_index, pattern, pattern + pattern_len);
-	LocateResult* result = new LocateResult(r);
-	return result;
-}
+LOCATE_WITH_TYPE(byte32, Byte32, uint8_t);
+LOCATE_WITH_TYPE(int32, Int32, uint64_t);
+LOCATE_WITH_TYPE(byte64, Byte64, uint8_t);
+LOCATE_WITH_TYPE(int64, Int64, uint64_t);
 
 // LOCATE
 
