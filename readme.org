@@ -14,6 +14,7 @@ dynamically link against:
 - =divsufsort64=
 - =sdsl=: the AUR package didn't quite work. Instead, clone the =sdsl-lite=
   repo, run =./install.sh=, and copy the =libsdsl.a= output into =/usr/lib=.
+  Also copy the =sdsl= folder and =divsufsort.h= and =divsufsort64.h= files into =/usr/include/=. 
   Alternatively you can try adding additional directories to be searched by the
   linked, but you're on your own then.
 
